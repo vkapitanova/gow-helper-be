@@ -6,6 +6,9 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
+@app.route('/')
+def healthcheck():
+    return {"status": "ok"}
 
 @app.route('/upload', methods=['POST', 'PUT'])
 def upload_file():
@@ -29,3 +32,6 @@ def upload_file():
             for val in line:
                 a.append(val)
         return {'map': a}
+
+if __name__ == "__main__":
+    app.run(debug=True)
