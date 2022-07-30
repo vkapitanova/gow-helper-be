@@ -1,0 +1,16 @@
+### Upload file multipart
+POST http://127.0.0.1:5000/upload
+Content-Type: multipart/form-data; boundary=Boundary
+
+--Boundary
+Content-Disposition: form-data; name="file"; filename="file1.jpg"
+Content-Type: image/jpeg
+
+< input/gow2.jpeg
+--Boundary--
+
+### Upload file binary
+PUT http://127.0.0.1:5000/upload
+Content-Type: image/jpeg
+
+< input/gow3.jpeg
