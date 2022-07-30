@@ -34,9 +34,9 @@ def find_template_matches(img, template_name, threshold):
                 best_matches = all_matches
             if max_value != 0 and max_val < max_value:
                 break
-            # cv.imwrite('temp/res{}.png'.format(i), img_attempt)
+            # cv.imwrite('out/res{}.png'.format(i), img_attempt)
         resized_temp = cv.resize(template, (original_template_size-i*2, original_template_size-i*2), interpolation=cv.INTER_AREA)
-        # cv.imwrite('temp/scaled{}.png'.format(i), resized_temp)
+        # cv.imwrite('out/scaled{}.png'.format(i), resized_temp)
     # print(max_value, max_value_location, best_run)
     # cleaning close points
     cleaned = best_matches
@@ -82,7 +82,7 @@ def detect_grid(img_file):
         # draw the center of the circle
         cv.circle(plot_img,(i[0],i[1]),2,(0,0,255),3)
 
-    cv.imwrite('temp/balls_detected.jpeg', plot_img)
+    cv.imwrite('out/balls_detected.jpeg', plot_img)
 
     min_x = 10000
     min_y = 10000
@@ -102,10 +102,10 @@ def detect_grid(img_file):
 
     grid_img = resized.copy()
     cv.rectangle(grid_img, (min_x, min_y), (min_x + grid_size, min_y + grid_size),(255, 0, 0), 2)
-    cv.imwrite('temp/grid_detected.jpeg', grid_img)
+    cv.imwrite('out/grid_detected.jpeg', grid_img)
 
     res = resized[min_y:min_y + grid_size, min_x:min_x + grid_size]
-    cv.imwrite('temp/grid_only.jpeg', res)
+    cv.imwrite('out/grid_only.jpeg', res)
     return res
 
 
@@ -117,7 +117,7 @@ def process_image(img_file):
     scale = perfect_rectangle_size / oh
     nw, nh = ow * scale, oh * scale
     resized = cv.resize(img_gray, (math.ceil(nw), math.ceil(nh)), interpolation=cv.INTER_AREA)
-    cv.imwrite('temp/resized.jpeg', resized)
+    cv.imwrite('out/resized.jpeg', resized)
     elem_size = 150
     map = np.zeros((8, 8), dtype=np.dtype('U2'))
     for i in range(8):
@@ -126,15 +126,19 @@ def process_image(img_file):
 
     for i in range(8):
         for j in range(8):
+            # print(i, j)
             elem = resized[i*elem_size:(i+1)*elem_size-1, j*elem_size:(j+1)*elem_size-1]
+            # cv.imwrite('temp/elem{}{}.jpeg'.format(i, j), elem)
             max_template = ''
             max_match = 0
             templates_map = {'yellow.jpeg': 'YE', 'green.jpeg': 'GR', 'red.jpeg': 'RE', 'blue.jpeg': 'BL', 'brown.jpeg': 'BR', 'violet.jpeg': 'VI', 'skull.jpeg': 'SK', 'rock_skull.jpeg': 'RS'}
             for template_name in ['yellow.jpeg', 'green.jpeg', 'red.jpeg', 'blue.jpeg', 'brown.jpeg', 'violet.jpeg', 'skull.jpeg', 'rock_skull.jpeg']:
-                template = cv.imread('templates/{}'.format(template_name), 0)
-                resized_temp = cv.resize(template, (elem_size-2, elem_size-2), interpolation=cv.INTER_AREA)
-                res = cv.matchTemplate(elem, resized_temp, cv.TM_CCOEFF_NORMED)
+                # print('matching {}'.format(template_name))
+                template = cv.imread('templates/{}'.format(template_name), cv.IMREAD_COLOR)
+                tmp_gray = cv.cvtColor(template, cv.COLOR_BGR2GRAY)
+                res = cv.matchTemplate(elem, tmp_gray, cv.TM_CCOEFF_NORMED)
                 min_val, max_val, min_loc, max_loc = cv.minMaxLoc(res)
+                # print('result', max_val)
                 if max_val > max_match:
                     max_template = template_name
                     max_match = max_val
@@ -168,7 +172,7 @@ def process_image_old(img_file):
     threshold = {'yellow.jpeg': 0.9, 'green.jpeg': 0.9, 'red.jpeg': 0.85, 'blue.jpeg': 0.9, 'brown.jpeg': 0.9, 'violet.jpeg': 0.85, 'skull.jpeg': 0.8, 'rock_skull.jpeg': 0.8}
     for template in ['yellow.jpeg', 'green.jpeg', 'red.jpeg', 'blue.jpeg', 'brown.jpeg', 'violet.jpeg', 'skull.jpeg', 'rock_skull.jpeg']:
     # for template in ['rock_skull.jpeg']:
-        print("matching {}".format(template))
+        print("matching {}".format(template), cv.IMREAD_COLOR)
         matches = find_template_matches(resized, template, threshold[template])
         add_matches(marked_image, matches)
         all_matches += matches
@@ -207,4 +211,4 @@ def process_image_old(img_file):
     return map
 
 
-# process_image("input/gow_skull.jpeg")
+# process_image("input/gow_green_problem.png")
