@@ -131,8 +131,10 @@ def process_image(img_file):
             # cv.imwrite('temp/elem{}{}.jpeg'.format(i, j), elem)
             max_template = ''
             max_match = 0
-            templates_map = {'yellow.jpeg': 'YE', 'green.jpeg': 'GR', 'red.jpeg': 'RE', 'blue.jpeg': 'BL', 'brown.jpeg': 'BR', 'violet.jpeg': 'VI', 'skull.jpeg': 'SK', 'rock_skull.jpeg': 'RS', 'block.jpeg': 'BK'}
-            for template_name in ['yellow.jpeg', 'green.jpeg', 'red.jpeg', 'blue.jpeg', 'brown.jpeg', 'violet.jpeg', 'skull.jpeg', 'rock_skull.jpeg', 'block.jpeg']:
+            templates_map = {'yellow.jpeg': 'YE', 'green.jpeg': 'GR', 'red.jpeg': 'RE', 'blue.jpeg': 'BL',
+                             'brown.jpeg': 'BR', 'violet.jpeg': 'VI', 'skull.jpeg': 'SK', 'rock_skull.jpeg': 'RS',
+                             'block.jpeg': 'BK', 'garg_good.jpeg': 'GG', 'garg_bad.jpeg': 'GG'}
+            for template_name in ['yellow.jpeg', 'green.jpeg', 'red.jpeg', 'blue.jpeg', 'brown.jpeg', 'violet.jpeg', 'skull.jpeg', 'rock_skull.jpeg', 'block.jpeg', 'garg_good.jpeg', 'garg_bad.jpeg']:
                 # print('matching {}'.format(template_name))
                 template = cv.imread('templates/{}'.format(template_name), cv.IMREAD_COLOR)
                 tmp_gray = cv.cvtColor(template, cv.COLOR_BGR2GRAY)
@@ -154,62 +156,6 @@ def process_image(img_file):
         print(res)
     return map
 
-def process_image_old(img_file):
-    # load image
-    img_rgb = cv.imread(img_file)
-    img_gray = cv.cvtColor(img_rgb, cv.COLOR_BGR2GRAY)
-    ow, oh = img_gray.shape[::-1]
-    # resize image
-    perfect_rectangle_size = 1200
-    scale = perfect_rectangle_size / oh
-    nw, nh = ow * scale, oh * scale
-    resized = cv.resize(img_gray, (math.ceil(nw), math.ceil(nh)), interpolation=cv.INTER_AREA)
-    cv.imwrite('scaled.png', resized)
-
-    marked_image = resized.copy()
-
-    all_matches = []
-    threshold = {'yellow.jpeg': 0.9, 'green.jpeg': 0.9, 'red.jpeg': 0.85, 'blue.jpeg': 0.9, 'brown.jpeg': 0.9, 'violet.jpeg': 0.85, 'skull.jpeg': 0.8, 'rock_skull.jpeg': 0.8}
-    for template in ['yellow.jpeg', 'green.jpeg', 'red.jpeg', 'blue.jpeg', 'brown.jpeg', 'violet.jpeg', 'skull.jpeg', 'rock_skull.jpeg']:
-    # for template in ['rock_skull.jpeg']:
-        print("matching {}".format(template), cv.IMREAD_COLOR)
-        matches = find_template_matches(resized, template, threshold[template])
-        add_matches(marked_image, matches)
-        all_matches += matches
-    print(len(all_matches))
-
-    left = min(all_matches, key=lambda x: x[0])[0]
-    right = max(all_matches, key=lambda x: x[0])[0]
-    top = min(all_matches, key=lambda x: x[1])[1]
-    bottom = max(all_matches, key=lambda x: x[1])[1]
-
-    for i in all_matches:
-        i[0] = i[0] - left
-        i[1] = i[1] - top
-
-    cell_size = (right - left) / 7
-    print('cell size: {}'.format(cell_size))
-
-    all_matches.sort(key=lambda x: x[0])
-
-    map = np.zeros((8, 8), dtype=np.dtype('U2'))
-    for i in range(8):
-        for j in range(8):
-            map[i][j] = 'un'
-
-    for m in all_matches:
-        x = round(m[0] / cell_size)
-        y = round(m[1] / cell_size)
-        # print(x, y)
-        map[y][x] = m[3]
-
-    for i in range(8):
-        res = ''
-        for j in range(8):
-            res += '{} '.format(map[i][j])
-        print(res)
-    return map
-
 
 def scale_template(filename):
     img_rgb = cv.imread(filename)
@@ -223,5 +169,5 @@ def scale_template(filename):
     cv.imwrite('scaled.jpeg', resized)
 
 
-process_image("input/gow_with_blocks.png")
+process_image("input/gow_gargs2.jpeg")
 # scale_template("templates/block.png")
