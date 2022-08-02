@@ -131,8 +131,8 @@ def process_image(img_file):
             # cv.imwrite('temp/elem{}{}.jpeg'.format(i, j), elem)
             max_template = ''
             max_match = 0
-            templates_map = {'yellow.jpeg': 'YE', 'green.jpeg': 'GR', 'red.jpeg': 'RE', 'blue.jpeg': 'BL', 'brown.jpeg': 'BR', 'violet.jpeg': 'VI', 'skull.jpeg': 'SK', 'rock_skull.jpeg': 'RS'}
-            for template_name in ['yellow.jpeg', 'green.jpeg', 'red.jpeg', 'blue.jpeg', 'brown.jpeg', 'violet.jpeg', 'skull.jpeg', 'rock_skull.jpeg']:
+            templates_map = {'yellow.jpeg': 'YE', 'green.jpeg': 'GR', 'red.jpeg': 'RE', 'blue.jpeg': 'BL', 'brown.jpeg': 'BR', 'violet.jpeg': 'VI', 'skull.jpeg': 'SK', 'rock_skull.jpeg': 'RS', 'block.jpeg': 'BK'}
+            for template_name in ['yellow.jpeg', 'green.jpeg', 'red.jpeg', 'blue.jpeg', 'brown.jpeg', 'violet.jpeg', 'skull.jpeg', 'rock_skull.jpeg', 'block.jpeg']:
                 # print('matching {}'.format(template_name))
                 template = cv.imread('templates/{}'.format(template_name), cv.IMREAD_COLOR)
                 tmp_gray = cv.cvtColor(template, cv.COLOR_BGR2GRAY)
@@ -211,4 +211,17 @@ def process_image_old(img_file):
     return map
 
 
-# process_image("input/gow_green_problem.png")
+def scale_template(filename):
+    img_rgb = cv.imread(filename)
+    img_gray = cv.cvtColor(img_rgb, cv.COLOR_BGR2GRAY)
+    ow, oh = img_gray.shape[::-1]
+    # resize image
+    perfect_rectangle_size = 141
+    scale = perfect_rectangle_size / oh
+    nw, nh = ow * scale, oh * scale
+    resized = cv.resize(img_gray, (math.ceil(nw), math.ceil(nh)), interpolation=cv.INTER_AREA)
+    cv.imwrite('scaled.jpeg', resized)
+
+
+process_image("input/gow_with_blocks.png")
+# scale_template("templates/block.png")
