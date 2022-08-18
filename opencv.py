@@ -106,17 +106,19 @@ def detect_grid(img_file):
 
     res = resized[min_y:min_y + grid_size, min_x:min_x + grid_size]
     cv.imwrite('out/grid_only.jpeg', res)
-    return res
+    return 'out/grid_only.jpeg', round(min_x / scale), round(min_y / scale), round(grid_size / scale)
 
 
-def process_image(img_file):
-    grid_img = detect_grid(img_file)
-    oh, ow, d = grid_img.shape
-    img_gray = cv.cvtColor(grid_img, cv.COLOR_BGR2GRAY)
+def process_image(img_file, grid_x, grid_y, grid_size):
+    img = cv.imread(img_file, cv.IMREAD_COLOR)
+    img_gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+    grid_img = img_gray[grid_y:grid_y + grid_size, grid_x:grid_x + grid_size]
+    cv.imwrite('out/grid_extracted.jpeg', grid_img)
+    oh, ow = grid_img.shape
     perfect_rectangle_size = 1200
     scale = perfect_rectangle_size / oh
     nw, nh = ow * scale, oh * scale
-    resized = cv.resize(img_gray, (math.ceil(nw), math.ceil(nh)), interpolation=cv.INTER_AREA)
+    resized = cv.resize(grid_img, (math.ceil(nw), math.ceil(nh)), interpolation=cv.INTER_AREA)
     cv.imwrite('out/resized.jpeg', resized)
     elem_size = 150
     map = np.zeros((8, 8), dtype=np.dtype('U2'))
@@ -169,5 +171,7 @@ def scale_template(filename):
     cv.imwrite('scaled.jpeg', resized)
 
 
-process_image("input/gow_gargs2.jpeg")
+# grid_img, x, y, grid_size = detect_grid('input/gow1.jpeg')
+# print(x, y, grid_size)
+# process_image("input/gow1.jpeg", x, y, grid_size)
 # scale_template("templates/block.png")

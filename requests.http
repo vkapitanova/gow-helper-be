@@ -1,19 +1,15 @@
 ### Healthcheck
-GET http://localhost:5000/
+GET http://127.0.0.1:5000/
 
-### Upload file multipart
-POST http://127.0.0.1:5000/upload
-Content-Type: multipart/form-data; boundary=Boundary
-
---Boundary
-Content-Disposition: form-data; name="file"; filename="file1.jpg"
+### detect grid
+PUT http://127.0.0.1:5000/detect-grid
 Content-Type: image/jpeg
 
-< input/gow2.jpeg
---Boundary--
+< input/gow1.jpeg
 
-### Upload file binary
-PUT http://127.0.0.1:5000/upload
+### detect balls
+PUT http://127.0.0.1:5000/upload?x=415&y=44&grid_size=507
 Content-Type: image/jpeg
 
-< input/gow3.jpeg
+< input/gow1.jpeg
+
