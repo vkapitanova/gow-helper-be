@@ -5,7 +5,7 @@ ADD requirements.txt /
 RUN pip install -r /requirements.txt
 # for opencv
 RUN apt-get update
-RUN apt-get install ffmpeg libsm6 libxext6  -y
+RUN apt-get install ffmpeg libsm6 libxext6 -y
 # copy files
 COPY . .
 
