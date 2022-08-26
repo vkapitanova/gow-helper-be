@@ -63,8 +63,10 @@ def add_matches(img, matches):
     cv.imwrite('out/res.png', img)
 
 
-def detect_grid(img_file):
-    img = cv.imread(img_file, cv.IMREAD_COLOR)
+def detect_grid(img_string):
+    nparr = np.fromstring(img_string, np.uint8)
+    img = cv.imdecode(nparr, cv.IMREAD_COLOR)
+    # img = cv.imread(img_file, cv.IMREAD_COLOR)
     oh, ow, d = img.shape
     perfect_rectangle_size = 1200
     scale = perfect_rectangle_size / oh
