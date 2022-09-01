@@ -40,7 +40,7 @@ def process_image(img_string, grid_x, grid_y, grid_size):
     resized = cv.resize(grid_img, (math.ceil(nw), math.ceil(nh)), interpolation=cv.INTER_AREA)
     # cv.imwrite('out/resized.jpeg', resized)
     elem_size = 150
-    map = np.zeros((8, 8), dtype=np.dtype('U2'))
+    map = np.zeros((8, 8), dtype=np.dtype('U24'))
     for i in range(8):
         for j in range(8):
             map[i][j] = 'UN'
@@ -52,10 +52,13 @@ def process_image(img_string, grid_x, grid_y, grid_size):
             # cv.imwrite('temp/elem{}{}.jpeg'.format(i, j), elem)
             max_template = ''
             max_match = 0
-            templates_map = {'yellow.jpeg': 'YE', 'green.jpeg': 'GR', 'red.jpeg': 'RE', 'blue.jpeg': 'BL',
-                             'brown.jpeg': 'BR', 'violet.jpeg': 'VI', 'skull.jpeg': 'SK', 'rock_skull.jpeg': 'RS',
-                             'block.jpeg': 'BK', 'garg_good.jpeg': 'GG', 'garg_bad.jpeg': 'GG'}
-            for template_name in ['yellow.jpeg', 'green.jpeg', 'red.jpeg', 'blue.jpeg', 'brown.jpeg', 'violet.jpeg', 'skull.jpeg', 'rock_skull.jpeg', 'block.jpeg', 'garg_good.jpeg', 'garg_bad.jpeg']:
+            templates_map = {'yellow.jpeg': 'basic_yellow', 'green.jpeg': 'basic_green', 'red.jpeg': 'basic_red', 'blue.jpeg': 'basic_blue',
+                             'brown.jpeg': 'basic_brown', 'violet.jpeg': 'basic_violet', 'skull.jpeg': 'skull_normal', 'rock_skull.jpeg': 'skull_rock',
+                             'block.jpeg': 'block', 'great_yellow.jpeg': 'great_yellow', 'great_green.jpeg': 'great_green',
+                             'great_red.jpeg': 'great_red', 'great_blue.jpeg': 'great_blue',
+                             'great_brown.jpeg': 'great_brown', 'great_violet.jpeg': 'great_violet'}
+            for template_name in ['yellow.jpeg', 'green.jpeg', 'red.jpeg', 'blue.jpeg', 'brown.jpeg', 'violet.jpeg', 'skull.jpeg', 'rock_skull.jpeg', 'block.jpeg',
+                                  'great_yellow.jpeg', 'great_green.jpeg', 'great_red.jpeg', 'great_blue.jpeg', 'great_brown.jpeg', 'great_violet.jpeg']:
                 # print('matching {}'.format(template_name))
                 template = cv.imread('/var/task/templates/{}'.format(template_name), cv.IMREAD_COLOR)
                 tmp_gray = cv.cvtColor(template, cv.COLOR_BGR2GRAY)
