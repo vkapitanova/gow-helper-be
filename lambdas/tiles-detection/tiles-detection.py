@@ -11,10 +11,10 @@ def handler(event, context):
     x = query_params["x"]
     y = query_params["y"]
     grid_size = query_params["grid_size"]
-    res = process_image(content, int(x), int(y), int(grid_size))
-    print(res)
+    map, my_mana, opponent_mana = process_image(content, int(x), int(y), int(grid_size))
+    print(map, my_mana, opponent_mana)
     a = []
-    for line in res:
+    for line in map:
         for val in line:
             a.append(val)
     return {
@@ -22,7 +22,7 @@ def handler(event, context):
         "headers": {
             "access-control-allow-origin": "*",
         },
-        "body": json.dumps({'map': a}),
+        "body": json.dumps({'map': a, 'my_mana': my_mana, 'opponent_mana': opponent_mana}),
     }
 
 
@@ -78,4 +78,43 @@ def process_image(img_string, grid_x, grid_y, grid_size):
         for j in range(8):
             res += '{} '.format(map[i][j])
         print(res)
-    return map
+    my_mana, opponent_mana = detect_cards(img, grid_x, grid_y, grid_size)
+    return map, my_mana, opponent_mana
+
+
+def detect_cards(img, grid_x, grid_y, grid_size):
+    print("grid: ", grid_x, grid_y, grid_size)
+    space_size = round(grid_size * 0.013333)
+    card_width = round(grid_size * 0.326667)
+    card_height = round(grid_size * 0.255)
+    print("card space, width, height: ", space_size, card_width, card_height)
+    cards_y = grid_y - space_size
+    my_cards_x = grid_x - space_size - card_width
+    my_mana = []
+    opponent_mana = []
+    if my_cards_x > 0 and cards_y > 0:
+        card_y = cards_y
+        for i in range(4):
+            full_mana = detect_mana(img, my_cards_x, card_y, card_width, card_height, i, False)
+            my_mana.append(full_mana)
+            card_y = card_y + card_height + space_size
+        opponent_cards_x = grid_x + grid_size + space_size
+        card_y = cards_y
+        for i in range(4):
+            full_mana = detect_mana(img, opponent_cards_x, card_y, card_width, card_height, i, True)
+            opponent_mana.append(full_mana)
+            card_y = card_y + card_height + space_size
+    return my_mana, opponent_mana
+
+
+def detect_mana(img, card_x, card_y, card_width, card_height, i, is_reversed):
+    card = img[card_y:card_y + card_height, card_x:card_x + card_width]
+    resized = cv.resize(card, (392, 306), interpolation=cv.INTER_AREA)
+    mana_ball = resized[0:72, 0:72] if (not is_reversed) else resized[0:72, 320:392]
+    img_gray = cv.cvtColor(mana_ball, cv.COLOR_BGR2GRAY)
+    template = cv.imread('/var/task/templates/{}'.format("slash.jpeg"), cv.IMREAD_COLOR)
+    tmp_gray = cv.cvtColor(template, cv.COLOR_BGR2GRAY)
+    res = cv.matchTemplate(img_gray, tmp_gray, cv.TM_CCOEFF_NORMED)
+    min_val, max_val, min_loc, max_loc = cv.minMaxLoc(res)
+    cv.imwrite('out/my_card{}.jpeg'.format(i+1), mana_ball)
+    return max_val < 0.8

@@ -36,11 +36,13 @@ def detect_grid_handler():
     # file.write(content)
     print(type(content))
     print(content)
-    res_file, x, y, grid_size = detect_grid(content)
+    res_file, x, y, grid_size, my_mana, opponent_mana = detect_grid(content)
     image_file = open(res_file, "rb")
     encoded_grid = base64.b64encode(image_file.read())
 
-    return {'grid': encoded_grid.decode(), 'x': x, 'y': y, 'grid_size': grid_size}
+    # return {'grid': encoded_grid.decode(), 'x': x, 'y': y, 'grid_size': grid_size}
+    return {'x': x, 'y': y, 'grid_size': grid_size, 'my_mana': my_mana, 'opponent_mana': opponent_mana}
+
 
 if __name__ == "__main__":
     app.run(debug=True)
