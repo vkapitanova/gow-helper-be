@@ -79,7 +79,8 @@ def process_image(img_string, grid_x, grid_y, grid_size):
         for j in range(8):
             res += '{} '.format(map[i][j])
         print(res)
-    return map
+    my_mana, opponent_mana = detect_cards(img, grid_x, grid_y, grid_size)
+    return map, my_mana, opponent_mana
 
 
 def find_best_template(elem, templates, min_match):
@@ -87,7 +88,7 @@ def find_best_template(elem, templates, min_match):
     max_match = 0
     for template_name in templates.keys():
         # print('matching {}'.format(template_name))
-        template = cv.imread('templates/{}'.format(template_name), cv.IMREAD_COLOR)
+        template = cv.imread('/var/task/templates/{}'.format(template_name), cv.IMREAD_COLOR)
         tmp_gray = cv.cvtColor(template, cv.COLOR_BGR2GRAY)
         res = cv.matchTemplate(elem, tmp_gray, cv.TM_CCOEFF_NORMED)
         min_val, max_val, min_loc, max_loc = cv.minMaxLoc(res)
