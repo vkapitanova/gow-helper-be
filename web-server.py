@@ -32,10 +32,6 @@ def upload_file():
 @app.route('/detect-grid', methods=['PUT'])
 def detect_grid_handler():
     content = request.get_data()
-    # file = open("out/uploaded_file.jpeg", "wb")
-    # file.write(content)
-    print(type(content))
-    print(content)
     res_file, x, y, grid_size, my_mana, opponent_mana = detect_grid(content)
     image_file = open(res_file, "rb")
     encoded_grid = base64.b64encode(image_file.read())

@@ -2,14 +2,49 @@
 GET http://127.0.0.1:5000/
 
 ### detect grid
-PUT http://127.0.0.1:5000/detect-grid
+PUT http://127.0.0.1:3000/detect-grid
 Content-Type: image/jpeg
 
 < input/gow1.jpeg
 
 ### detect balls
-PUT http://127.0.0.1:5000/upload?x=415&y=44&grid_size=507
+PUT http://127.0.0.1:3000/upload?x=415&y=44&grid_size=507
 Content-Type: image/jpeg
 
 < input/gow1.jpeg
 
+### detect balls
+PUT http://127.0.0.1:3000/upload?x=3&y=1&grid_size=1197
+Content-Type: image/jpeg
+
+< input/map_blue_yellow_dragons.jpeg
+
+### detect balls
+PUT http://127.0.0.1:3000/upload?x=0&y=1&grid_size=1192
+Content-Type: image/jpeg
+
+< input/map_brown_dragon.jpeg
+
+### detect balls
+PUT http://127.0.0.1:3000/upload?x=5&y=5&grid_size=1193
+Content-Type: image/jpeg
+
+< input/map_red_dragon.jpeg
+
+### detect balls
+PUT http://127.0.0.1:3000/upload?x=1&y=1&grid_size=1194
+Content-Type: image/jpeg
+
+< input/map_violet_green_dragons.jpeg
+
+### detect balls
+PUT http://127.0.0.1:3000/upload?x=3&y=3&grid_size=1194
+Content-Type: image/jpeg
+
+< input/map_yellow_dragon.jpeg
+
+### detect balls
+PUT http://127.0.0.1:3000/upload?x=3&y=3&grid_size=1193
+Content-Type: image/jpeg
+
+< input/great_yellow_map.jpeg
